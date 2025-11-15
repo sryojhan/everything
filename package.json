@@ -1,0 +1,19 @@
+{
+  "name": "com.yojhan.everything",
+  "version": "1.0.0",
+  "displayName": "everything",
+  "description": "Everything needed to start a new Unity project",
+  "unity": "2021.3",
+  "keywords": [
+    "utilities",
+    "common",
+    "tools",
+    "extensions",
+    "framework",
+    "everything"
+  ],
+  "author": {
+    "name": "Yojhan",
+    "url": "https://github.com/sryojhan"
+  }
+}
