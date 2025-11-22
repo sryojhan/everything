@@ -7,6 +7,8 @@ using UnityEngine;
 [DefaultExecutionOrder(-2000)]
 public class EventBus : Singleton<EventBus>
 {
+    protected override bool AutoInitialise => true;
+
     private readonly Dictionary<Type, Delegate> subscribers = new();
 
     public static void Subscribe<EventType>(Action<EventType> evt) where EventType : class
@@ -230,5 +232,5 @@ public class EventBus : Singleton<EventBus>
             return ConditionCallback();
         }
     }
-
 }
+

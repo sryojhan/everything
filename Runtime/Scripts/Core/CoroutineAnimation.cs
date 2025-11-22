@@ -1,3 +1,4 @@
+using Codice.Client.BaseCommands.WkStatus.Printers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,8 +17,14 @@ public class CoroutineAnimation
 
     private float progress = 0;
     private Coroutine coroutine = null;
+    //TODO: cambiarlo para que soporte usar la misma clase en varias entidades
 
-    public virtual void Play(MonoBehaviour behaviour, OnValueUpdate update = null, Callback begin = null, Callback end = null, bool useUnscaledTime = false)
+    //TODO: lerping float
+
+
+    //TODO: se debe ejecutar el onBegin antes de acceder a los valores de la corrutina por si el valor inicial cambia en el onBegin
+
+    public virtual void Play(MonoBehaviour behaviour, OnValueUpdate onUpdate = null, Callback onBegin = null, Callback onEnd = null, bool useUnscaledTime = false, float? customDuration = null)
     {
         if(coroutine != null)
         {
@@ -25,10 +32,12 @@ public class CoroutineAnimation
             coroutine = null;
         }
 
-        coroutine = behaviour.StartCoroutine(Coroutine(update, begin, end, useUnscaledTime));
+        coroutine = behaviour.StartCoroutine(
+            Coroutine(onUpdate, onBegin, onEnd, useUnscaledTime, customDuration ?? duration)
+            );
     }
 
-    public IEnumerator Coroutine(OnValueUpdate update, Callback begin, Callback onFinish, bool useUnscaledTime)
+    public IEnumerator Coroutine(OnValueUpdate update, Callback begin, Callback onFinish, bool useUnscaledTime, float duration)
     {
         yield return new WaitForSeconds(delay);
         
@@ -70,6 +79,20 @@ public class CoroutineAnimation
     }
 
 
+    public void Lerp(MonoBehaviour obj, SmartFloat number, float target, OnValueUpdate onUpdate = null, Callback onBegin = null, Callback onEnd = null, bool useUnscaledTime = false)
+    {
+        float initial = number;
+
+        void OnUpdate(float i)
+        {
+            number.Value = Mathf.LerpUnclamped(initial, target, i);
+            onUpdate?.Invoke(i);
+        }
+
+        Play(obj, OnUpdate, onBegin, onEnd, useUnscaledTime: useUnscaledTime);
+    }
+
+
     public void MoveTo(MonoBehaviour obj, RectTransform tr, Vector2 finalPosition, OnValueUpdate onUpdate = null, Callback onBegin = null, Callback onEnd = null, bool useUnscaledTime = false)
     {
         Vector2 initialPosition = tr.anchoredPosition;
@@ -85,7 +108,7 @@ public class CoroutineAnimation
     }
 
 
-    public void MoveTo(MonoBehaviour obj, Transform tr, Vector3 finalPosition, OnValueUpdate onUpdate = null, Callback onBegin = null, Callback onEnd = null, bool local = true, bool useUnscaledTime = false)
+    public void MoveTo(MonoBehaviour obj, Transform tr, Vector3 finalPosition, OnValueUpdate onUpdate = null, Callback onBegin = null, Callback onEnd = null, bool local = true, bool useUnscaledTime = false, float? customDuration = null)
     {
         Vector3 initialPosition = local ? tr.localPosition : tr.position;
 
@@ -99,8 +122,10 @@ public class CoroutineAnimation
             onUpdate?.Invoke(i);
         }
 
-        Play(obj, OnUpdate, onBegin, onEnd, useUnscaledTime: useUnscaledTime);
+        Play(obj, OnUpdate, onBegin, onEnd, useUnscaledTime: useUnscaledTime, customDuration: customDuration);
     }
+
+    //TODO: puede ser negativa la escala
 
     public void ScaleTo(MonoBehaviour obj, Transform tr, Vector3 finalScale, OnValueUpdate onUpdate = null, Callback onBegin = null, Callback onEnd = null, bool useUnscaledTime = false)
     {
@@ -129,6 +154,31 @@ public class CoroutineAnimation
         }
 
         Play(obj, OnUpdate, onBegin, onEnd, useUnscaledTime: useUnscaledTime);
+    }
+
+
+
+    /// <summary>
+    /// The duration param will now serve as the speed. 
+    /// </summary>
+    public void MoveAtConstantPace(MonoBehaviour obj, Transform tr, Vector3 finalPosition, OnValueUpdate onUpdate = null, Callback onBegin = null, Callback onEnd = null, bool local = true, bool useUnscaledTime = false)
+    {
+        Vector3 initialPosition = local ? tr.localPosition : tr.position;
+
+        float distance = Vector3.Distance(initialPosition, finalPosition);
+        float duration = distance / this.duration;
+
+        MoveTo(
+            obj: obj,
+            tr: tr,
+            finalPosition: finalPosition,
+            onUpdate: onUpdate,
+            onBegin: onBegin,
+            onEnd: onEnd,
+            useUnscaledTime: useUnscaledTime,
+            local: local,
+            customDuration: duration
+        );
     }
 
 }

@@ -1,9 +1,7 @@
 {
-    "name": "Core",
-    "rootNamespace": "",
-    "references": [
-        "GUID:f24cf67903b27ae498b3069ecc30cc11"
-    ],
+    "name": "EasyButtons",
+    "references": [],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -11,6 +9,5 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+    "versionDefines": []
 }
