@@ -7,6 +7,7 @@ public class ShaderPropertyAnimation
     public Material material;
     public Material secondaryMaterial;
 
+    //TODO: ya que siempre se usa la misma propiedad con esto, convertirlo en un id al principio y usar unicamente eso
     public string property = "value";
 
     public float offValue = 0;
