@@ -2,6 +2,9 @@ using System;
 using System.Runtime.Serialization;
 using UnityEngine;
 
+
+//TODO: muchas de estas cosas deberian hacerse protected en lugar de publicas...
+
 [DefaultExecutionOrder(-1000)]
 public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 {

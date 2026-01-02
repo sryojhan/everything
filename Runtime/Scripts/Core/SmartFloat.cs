@@ -1,6 +1,10 @@
 using UnityEngine;
 
 [System.Serializable]
+
+//TODO: cambiar nombre a observableFloat
+//TODO: hacer clase generica observable
+
 public class SmartFloat
 {
     public delegate void OnValueChangedEvent(float previousValue, float newValue);
