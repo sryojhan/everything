@@ -13,6 +13,7 @@ namespace Dialogue.Editor
         private Texture2D _indentIcon;
 
         public Port PortToConnect;
+        public Vector2 SpawnPosition;
 
         // Modificamos Init para pedir la ventana
         public void Init(DialogueGraphView graphView, UnityEditor.EditorWindow window)
@@ -44,7 +45,7 @@ namespace Dialogue.Editor
 
         public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
         {
-            var windowMousePosition = context.screenMousePosition - _window.position.position;
+            var windowMousePosition = SpawnPosition - _window.position.position;
             var graphMousePosition = _graphView.contentViewContainer.WorldToLocal(windowMousePosition);
 
             // Variable para guardar el nodo recién creado

@@ -27,13 +27,20 @@ namespace Dialogue.Editor
             grid.StretchToParentSize();
 
             AddSearchWindow();
+
+            graphViewChanged = OnGraphViewChanged;
         }
 
         private void AddSearchWindow()
         {
             _searchWindow = ScriptableObject.CreateInstance<DialogueSearchWindow>();
             _searchWindow.Init(this, EditorWindow);
-            nodeCreationRequest = ctx => SearchWindow.Open(new SearchWindowContext(ctx.screenMousePosition), _searchWindow);
+
+            nodeCreationRequest = ctx =>
+            {
+                _searchWindow.SpawnPosition = ctx.screenMousePosition;
+                SearchWindow.Open(new SearchWindowContext(ctx.screenMousePosition), _searchWindow);
+            };
         }
 
         // Método principal de fábrica de nodos visuales
@@ -162,6 +169,58 @@ namespace Dialogue.Editor
                     compatiblePorts.Add(port);
             });
             return compatiblePorts;
+        }
+
+
+        private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
+        {
+            // Verificamos si hay elementos para borrar
+            if (graphViewChange.elementsToRemove != null)
+            {
+                // Iteramos sobre lo que se va a borrar
+                foreach (var element in graphViewChange.elementsToRemove)
+                {
+                    // Si lo que estamos borrando es un Nodo...
+                    if (element is Node node)
+                    {
+                        var edgesToRemove = new List<Edge>();
+
+                        // 1. Buscamos conexiones en los puertos de ENTRADA
+                        if (node.inputContainer != null)
+                        {
+                            foreach (Port port in node.inputContainer.Children())
+                            {
+                                if (port.connections != null)
+                                    edgesToRemove.AddRange(port.connections);
+                            }
+                        }
+
+                        // 2. Buscamos conexiones en los puertos de SALIDA
+                        if (node.outputContainer != null)
+                        {
+                            foreach (Port port in node.outputContainer.Children())
+                            {
+                                if (port.connections != null)
+                                    edgesToRemove.AddRange(port.connections);
+                            }
+                        }
+
+                        // 3. Añadimos esos cables a la lista de borrado oficial
+                        foreach (var edge in edgesToRemove)
+                        {
+                            // Comprobamos que no esté ya en la lista para no duplicar
+                            if (!graphViewChange.elementsToRemove.Contains(edge))
+                            {
+                                graphViewChange.elementsToRemove.Add(edge);
+                            }
+                        }
+                    }
+
+                    // Opcional: Si borras un cable, aquí podrías limpiar datos extra si quisieras
+                }
+            }
+
+            return graphViewChange;
         }
     }
 }

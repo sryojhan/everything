@@ -31,10 +31,10 @@ namespace Dialogue.Editor
             _searchWindow.PortToConnect = edge.output;
 
             Vector2 screenMousePosition = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
-
+            _searchWindow.SpawnPosition = screenMousePosition;
             // 2. Abrimos el menú en la posición del ratón
             SearchWindow.Open(
-                new SearchWindowContext(screenMousePosition),
+                new SearchWindowContext(screenMousePosition + new Vector2(130, 0)),
                 _searchWindow
             );
         }
