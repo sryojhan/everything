@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace Dialogue.Editor
         {
             EditorWindow = window;
 
-            SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+            SetupZoom(0.1f, 8.0f);
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
@@ -25,6 +26,7 @@ namespace Dialogue.Editor
             var grid = new GridBackground();
             Insert(0, grid);
             grid.StretchToParentSize();
+
 
             AddSearchWindow();
 
@@ -188,7 +190,7 @@ namespace Dialogue.Editor
                         // 1. Buscamos conexiones en los puertos de ENTRADA
                         if (node.inputContainer != null)
                         {
-                            foreach (Port port in node.inputContainer.Children())
+                            foreach (Port port in node.inputContainer.Children().Cast<Port>())
                             {
                                 if (port.connections != null)
                                     edgesToRemove.AddRange(port.connections);
@@ -198,7 +200,7 @@ namespace Dialogue.Editor
                         // 2. Buscamos conexiones en los puertos de SALIDA
                         if (node.outputContainer != null)
                         {
-                            foreach (Port port in node.outputContainer.Children())
+                            foreach (Port port in node.outputContainer.Children().Cast<Port>())
                             {
                                 if (port.connections != null)
                                     edgesToRemove.AddRange(port.connections);
