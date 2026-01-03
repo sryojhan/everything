@@ -54,7 +54,7 @@ public class ScreenEffectController : Singleton<ScreenEffectController>
         }
     }
 
-    [EasyButtons.Button]
+    [Button]
     public void ResetEffects()
     {
         foreach (ScreenEffect effect in screenEffects)
